@@ -1,12 +1,44 @@
 //const http = require('http');
 //const port = 3000;
+
+//https://scotch.io/tutorials/scraping-the-web-with-node-js
+
 const path = require('path');
-
-const cheerio = require('cheerio');
-const $ = cheerio.load('<h2 class="title">Hellooooo world</h2>');
-
 const express = require('express');
 const app = express();
+const request = require('request');
+const cheerio = require('cheerio');
+const fs = require('fs');
+
+
+//Webscrape route
+app.get('/scrape', function(req,res) {
+    //Call the website
+    url = 'https://modao-zushi.fandom.com/wiki/Wei_Wuxian';
+
+    request(url, function(error, response, html) {
+        if(!error) {
+            var $ = cheerio.load(html);
+            var json = {name: ""};
+
+            $('h3.pi-data-label.pi-secondary-font').filter(function() {
+                
+                var data = $(this);
+                name = data.get().length;
+
+                json.name = name;
+            })
+        }
+
+        fs.writeFile('output.json', JSON.stringify(json, null, 4), function(err)
+        {
+        console.log('File successfully written');
+        })
+    
+        res.send('Check console');
+    })
+})
+
 
 
 //Routes
@@ -35,4 +67,6 @@ app.get('/niesect', function(req,res) {
 });
 
 
-app.listen(3000);
+app.listen(3000)
+console.log('Hosted on port 3000');
+exports = module.exports = app;
