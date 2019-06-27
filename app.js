@@ -19,14 +19,26 @@ app.get('/scrape', function(req,res) {
     request(url, function(error, response, html) {
         if(!error) {
             var $ = cheerio.load(html);
-            var json = {name: ""};
+            var json = {name: "", person: ""};
 
-            $('h3.pi-data-label.pi-secondary-font').filter(function() {
+            $('section.pi-item.pi-group.pi-border-color.pi-collapse.pi-collapse-closed').filter(function() {
                 
                 var data = $(this);
-                name = data.get().length;
+                name = data.text();
 
                 json.name = name;
+            })
+
+            $('p').filter(function() {
+                var data = $(this);
+                person = data.text();
+
+                json.person = person;
+            })
+
+            $('p').filter(function() {
+                var data = $(this);
+                person = data.text();
             })
         }
 
